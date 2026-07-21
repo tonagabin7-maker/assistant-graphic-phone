@@ -1,6 +1,6 @@
 // ETAPE 3 : Chat connecte a l'API Claude
 const CLAUDE_API_KEY = 'sk-cs4-f71a6b468c368c9c340160080080920cb36ceb4d23a63324'; // <-- remplace par ta nouvelle cle (celle que tu as revoquee ne marchera plus)
-const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
 const SYSTEM_INSTRUCTION = "Tu es l'assistant personnel pour la marque 'Graphic Phone' (graphisme mobile) et la formation 'G∆MYs Academy VIP'. Charte graphique : palette navy/brun/or, typographie Montserrat. Reponds toujours en francais, de facon concise et directement utilisable pour du graphisme, de la creation de contenu, de la formation ou du coaching.";
 
 const STORAGE_KEY = 'graphicPhoneLib';
