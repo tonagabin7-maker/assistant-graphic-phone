@@ -1,4 +1,8 @@
-// ETAPE 2 : Bibliotheque de contenu (gratuite, sans IA connectee)
+// ETAPE 3 : Chat connecte a l'API Gemini (gratuite)
+const GEMINI_API_KEY = 'sk_cb187ae3_bcaddda747d9d2d042a2d820184411da'; // <-- remplace par ta vraie cle
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const SYSTEM_INSTRUCTION = "Tu es l'assistant personnel pour la marque 'Graphic Phone' (graphisme mobile) et la formation 'G∆MYs Academy VIP'. Charte graphique : palette navy/brun/or, typographie Montserrat. Reponds toujours en francais, de facon concise et directement utilisable pour du graphisme, de la creation de contenu, de la formation ou du coaching.";
+
 const STORAGE_KEY = 'graphicPhoneLib';
 let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let currentCategory = 'Toutes';
@@ -27,21 +31,46 @@ function ajouterMessage(texte, type) {
   div.textContent = texte;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
+  return div;
 }
 
-function envoyer() {
+async function envoyer() {
   const texte = userInput.value.trim();
   if (!texte) return;
   ajouterMessage(texte, 'user');
   userInput.value = '';
-  setTimeout(() => {
-    ajouterMessage("Mode test - IA pas encore branchee. Utilise l onglet Bibliotheque pour organiser ton contenu.", 'assistant');
-  }, 300);
+
+  const loadingDiv = ajouterMessage('Reflexion...', 'assistant');
+
+  try {
+    const response = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+          contents: [{ role: 'user', parts: [{ text: texte }] }]
+        })
+      }
+    );
+    const data = await response.json();
+    const reponse = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text)
+      ? data.candidates[0].content.parts[0].text
+      : "Desole, pas de reponse generee. Reessaie.";
+    loadingDiv.textContent = reponse;
+  } catch (err) {
+    loadingDiv.textContent = "Erreur de connexion. Verifie ta cle API et ta connexion internet.";
+  }
+  chat.scrollTop = chat.scrollHeight;
 }
 
 sendBtn.addEventListener('click', envoyer);
 userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') envoyer(); });
-ajouterMessage("Bonjour ! Le chat IA n est pas encore branche. Utilise la Bibliotheque pour stocker tes contenus.", 'assistant');
+ajouterMessage("Bonjour ! Je suis connecte a l'IA maintenant. Pose-moi ta question.", 'assistant');
 
 const libList = document.getElementById('libList');
 const libSearch = document.getElementById('libSearch');
