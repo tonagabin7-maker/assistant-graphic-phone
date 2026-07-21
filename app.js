@@ -1,6 +1,6 @@
-// ETAPE 3 : Chat connecte a l'API Gemini (gratuite)
-const GEMINI_API_KEY = 'sk_cb187ae3_bcaddda747d9d2d042a2d820184411da'; // <-- remplace par ta vraie cle
-const GEMINI_MODEL = 'gemini-2.5-flash';
+// ETAPE 3 : Chat connecte a l'API Claude
+const CLAUDE_API_KEY = 'sk-cs4-f71a6b468c368c9c340160080080920cb36ceb4d23a63324'; // <-- remplace par ta nouvelle cle (celle que tu as revoquee ne marchera plus)
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 const SYSTEM_INSTRUCTION = "Tu es l'assistant personnel pour la marque 'Graphic Phone' (graphisme mobile) et la formation 'G∆MYs Academy VIP'. Charte graphique : palette navy/brun/or, typographie Montserrat. Reponds toujours en francais, de facon concise et directement utilisable pour du graphisme, de la creation de contenu, de la formation ou du coaching.";
 
 const STORAGE_KEY = 'graphicPhoneLib';
@@ -43,24 +43,25 @@ async function envoyer() {
   const loadingDiv = ajouterMessage('Reflexion...', 'assistant');
 
   try {
-    const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': GEMINI_API_KEY
-        },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-          contents: [{ role: 'user', parts: [{ text: texte }] }]
-        })
-      }
-    );
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 1024,
+        system: SYSTEM_INSTRUCTION,
+        messages: [{ role: 'user', content: texte }]
+      })
+    });
     const data = await response.json();
-    const reponse = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text)
-      ? data.candidates[0].content.parts[0].text
-      : "Desole, pas de reponse generee. Reessaie.";
+    const reponse = (data.content && data.content[0] && data.content[0].text)
+      ? data.content[0].text
+      : "Desole, pas de reponse generee. Verifie ta cle API. Detail: " + JSON.stringify(data).slice(0, 150);
     loadingDiv.textContent = reponse;
   } catch (err) {
     loadingDiv.textContent = "Erreur de connexion. Verifie ta cle API et ta connexion internet.";
@@ -180,5 +181,4 @@ function supprimerEntree(id) {
   renderLibrary();
 }
 
-document.getElementById('addBtn').style.display = 'none';
-renderLibrary();
+do
