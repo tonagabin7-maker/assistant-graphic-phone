@@ -1,6 +1,4 @@
-// ETAPE 3 : Chat connecte a l'API Claude
-const CLAUDE_API_KEY = 'sk-cs4-f71a6b468c368c9c340160080080920cb36ceb4d23a63324'; // <-- remplace par ta nouvelle cle (celle que tu as revoquee ne marchera plus)
-const CLAUDE_MODEL = 'claude-3-5-haiku-latest';
+// ETAPE 3 : Chat connecte a l'API Claude (via Cloudflare Worker)
 const SYSTEM_INSTRUCTION = "Tu es l'assistant personnel pour la marque 'Graphic Phone' (graphisme mobile) et la formation 'G∆MYs Academy VIP'. Charte graphique : palette navy/brun/or, typographie Montserrat. Reponds toujours en francais, de facon concise et directement utilisable pour du graphisme, de la creation de contenu, de la formation ou du coaching.";
 
 const STORAGE_KEY = 'graphicPhoneLib';
@@ -43,17 +41,12 @@ async function envoyer() {
   const loadingDiv = ajouterMessage('Reflexion...', 'assistant');
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://assistante-proxy.tonagabin7.workers.dev', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 1024,
         system: SYSTEM_INSTRUCTION,
         messages: [{ role: 'user', content: texte }]
       })
@@ -61,10 +54,10 @@ async function envoyer() {
     const data = await response.json();
     const reponse = (data.content && data.content[0] && data.content[0].text)
       ? data.content[0].text
-      : "Desole, pas de reponse generee. Verifie ta cle API. Detail: " + JSON.stringify(data).slice(0, 150);
+      : "Desole, pas de reponse generee. Detail: " + JSON.stringify(data).slice(0, 150);
     loadingDiv.textContent = reponse;
   } catch (err) {
-    loadingDiv.textContent = "Erreur de connexion. Verifie ta cle API et ta connexion internet.";
+    loadingDiv.textContent = "Erreur de connexion. Verifie ta connexion internet.";
   }
   chat.scrollTop = chat.scrollHeight;
 }
@@ -180,5 +173,3 @@ function supprimerEntree(id) {
   saveEntries();
   renderLibrary();
 }
-
-do
