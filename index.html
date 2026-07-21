@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mon Assistant IA</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a1128">
+<style>
+  :root {
+    --navy: #0a1128;
+    --brown: #6b4423;
+    --gold: #c9a24b;
+    --white: #f9f6f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+  }
+  header h1 {
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    line-height: 1.4;
+    font-size: 15px;
+    white-space: pre-wrap;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--gold);
+    color: var(--navy);
+  }
+  .msg.assistant {
+    align-self: flex-start;
+    background: var(--brown);
+    color: var(--white);
+  }
+  #inputBar {
+    display: flex;
+    padding: 12px;
+    gap: 8px;
+    border-top: 2px solid var(--gold);
+  }
+  #userInput {
+    flex: 1;
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    font-size: 15px;
+    font-family: inherit;
+  }
+  #sendBtn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 20px;
+    padding: 0 18px;
+    font-weight: 600;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>ASSISTANT GRAPHIC PHONE</h1>
+  </header>
+
+  <div id="chat"></div>
+
+  <div id="inputBar">
+    <input id="userInput" type="text" placeholder="Écris ta demande..." />
+    <button id="sendBtn">Envoyer</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
