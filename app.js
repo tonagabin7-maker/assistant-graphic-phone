@@ -1,11 +1,8 @@
 // ÉTAPE 2 : Bibliothèque de contenu (gratuite, sans IA connectée)
-// Les contenus sont sauvegardés dans le navigateur (localStorage)
-
 const STORAGE_KEY = 'graphicPhoneLib';
 let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let currentCategory = 'Toutes';
 
-// --- Navigation entre onglets (Chat / Bibliothèque) ---
 const tabBtns = document.querySelectorAll('.tab-btn');
 const screens = document.querySelectorAll('.screen');
 
@@ -19,7 +16,6 @@ tabBtns.forEach(btn => {
   });
 });
 
-// --- Chat (mode test) ---
 const chat = document.getElementById('chat');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -38,15 +34,14 @@ function envoyer() {
   ajouterMessage(texte, 'user');
   userInput.value = '';
   setTimeout(() => {
-    ajouterMessage("Mode test - IA pas encore branchée. Utilise l'onglet Bibliothèque pour organiser ton contenu.", 'assistant');
+    ajouterMessage("Mode test - IA pas encore branchee. Utilise l onglet Bibliotheque pour organiser ton contenu.", 'assistant');
   }, 300);
 }
 
 sendBtn.addEventListener('click', envoyer);
 userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') envoyer(); });
-ajouterMessage("Bonjour ! Le chat IA n'est pas encore branché. Utilise la Bibliothèque pour stocker tes contenus.", 'assistant');
+ajouterMessage("Bonjour ! Le chat IA n est pas encore branche. Utilise la Bibliotheque pour stocker tes contenus.", 'assistant');
 
-// --- Bibliothèque ---
 const libList = document.getElementById('libList');
 const libSearch = document.getElementById('libSearch');
 const categoryTabs = document.getElementById('categoryTabs');
@@ -55,7 +50,7 @@ const addModal = document.getElementById('addModal');
 const addForm = document.getElementById('addForm');
 const cancelEntryBtn = document.getElementById('cancelEntryBtn');
 
-const CATEGORIES = ['Toutes', 'Posts', 'Réponses clients', 'Formation'];
+const CATEGORIES = ['Toutes', 'Posts', 'Reponses clients', 'Formation'];
 
 function saveEntries() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
@@ -86,23 +81,22 @@ function renderLibrary() {
 
   libList.innerHTML = '';
   if (filtered.length === 0) {
-    libList.innerHTML = '<p style="opacity:0.6;text-align:center;margin-top:20px;">Aucun contenu pour l\\'instant.</p>';
+    libList.innerHTML = '<p style="opacity:0.6;text-align:center;margin-top:20px;">Aucun contenu pour le moment.</p>';
     return;
   }
 
   filtered.forEach(entry => {
     const card = document.createElement('div');
     card.className = 'lib-card';
-    card.innerHTML = `
-      <h3>${entry.title} <span style="opacity:0.6;font-size:11px;">(${entry.category})</span></h3>
-      <p>${entry.content}</p>
-      <div class="lib-actions">
-        <button onclick="copierContenu('${entry.id}')">Copier</button>
-        <button onclick="ouvrirWhatsApp('${entry.id}')">WhatsApp</button>
-        <button onclick="ouvrirFacebook('${entry.id}')">Facebook</button>
-        <button class="danger" onclick="supprimerEntree('${entry.id}')">Supprimer</button>
-      </div>
-    `;
+    card.innerHTML =
+      '<h3>' + entry.title + ' <span style="opacity:0.6;font-size:11px;">(' + entry.category + ')</span></h3>' +
+      '<p>' + entry.content + '</p>' +
+      '<div class="lib-actions">' +
+      '<button onclick="copierContenu(\'' + entry.id + '\')">Copier</button>' +
+      '<button onclick="ouvrirWhatsApp(\'' + entry.id + '\')">WhatsApp</button>' +
+      '<button onclick="ouvrirFacebook(\'' + entry.id + '\')">Facebook</button>' +
+      '<button class="danger" onclick="supprimerEntree(\'' + entry.id + '\')">Supprimer</button>' +
+      '</div>';
     libList.appendChild(card);
   });
 }
@@ -119,7 +113,7 @@ addForm.addEventListener('submit', (e) => {
   const content = document.getElementById('entryContent').value.trim();
   if (!title || !content) return;
 
-  entries.unshift({ id: Date.now().toString(), title, category, content });
+  entries.unshift({ id: Date.now().toString(), title: title, category: category, content: content });
   saveEntries();
   addModal.classList.remove('active');
   addForm.reset();
@@ -130,7 +124,7 @@ function copierContenu(id) {
   const entry = entries.find(e => e.id === id);
   if (!entry) return;
   navigator.clipboard.writeText(entry.content).then(() => {
-    alert('Copié dans le presse-papier !');
+    alert('Copie dans le presse-papier !');
   });
 }
 
@@ -145,7 +139,7 @@ function ouvrirFacebook(id) {
   const entry = entries.find(e => e.id === id);
   if (!entry) return;
   navigator.clipboard.writeText(entry.content);
-  alert('Contenu copié ! Colle-le directement dans Facebook.');
+  alert('Contenu copie ! Colle-le directement dans Facebook.');
   window.open('https://www.facebook.com/', '_blank');
 }
 
