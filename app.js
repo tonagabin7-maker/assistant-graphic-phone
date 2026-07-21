@@ -1,4 +1,4 @@
-// ÉTAPE 2 : Bibliothèque de contenu (gratuite, sans IA connectée)
+// ETAPE 2 : Bibliotheque de contenu (gratuite, sans IA connectee)
 const STORAGE_KEY = 'graphicPhoneLib';
 let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let currentCategory = 'Toutes';
@@ -12,6 +12,7 @@ tabBtns.forEach(btn => {
     screens.forEach(s => s.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.screen).classList.add('active');
+    document.getElementById('addBtn').style.display = (btn.dataset.screen === 'libScreen') ? 'flex' : 'none';
     if (btn.dataset.screen === 'libScreen') renderLibrary();
   });
 });
@@ -150,4 +151,5 @@ function supprimerEntree(id) {
   renderLibrary();
 }
 
+document.getElementById('addBtn').style.display = 'none';
 renderLibrary();
