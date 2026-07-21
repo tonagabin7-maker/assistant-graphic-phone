@@ -32,6 +32,33 @@
     color: var(--gold);
     letter-spacing: 1px;
   }
+
+  /* Onglets */
+  #tabs {
+    display: flex;
+    border-bottom: 1px solid var(--brown);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: none;
+    border: none;
+    color: var(--white);
+    opacity: 0.6;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .tab-btn.active {
+    opacity: 1;
+    border-bottom: 3px solid var(--gold);
+    color: var(--gold);
+  }
+
+  .screen { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* Chat */
   #chat {
     flex: 1;
     overflow-y: auto;
@@ -48,39 +75,103 @@
     font-size: 15px;
     white-space: pre-wrap;
   }
-  .msg.user {
-    align-self: flex-end;
-    background: var(--gold);
-    color: var(--navy);
-  }
-  .msg.assistant {
-    align-self: flex-start;
-    background: var(--brown);
-    color: var(--white);
-  }
-  #inputBar {
-    display: flex;
+  .msg.user { align-self: flex-end; background: var(--gold); color: var(--navy); }
+  .msg.assistant { align-self: flex-start; background: var(--brown); color: var(--white); }
+  #inputBar { display: flex; padding: 12px; gap: 8px; border-top: 2px solid var(--gold); }
+  #userInput { flex: 1; padding: 12px; border-radius: 20px; border: none; font-size: 15px; font-family: inherit; }
+  #sendBtn { background: var(--gold); color: var(--navy); border: none; border-radius: 20px; padding: 0 18px; font-weight: 600; font-family: inherit; }
+
+  /* Bibliothèque */
+  #libScreen { padding: 14px; gap: 12px; }
+  #libSearch {
     padding: 12px;
-    gap: 8px;
-    border-top: 2px solid var(--gold);
-  }
-  #userInput {
-    flex: 1;
-    padding: 12px;
-    border-radius: 20px;
+    border-radius: 10px;
     border: none;
     font-size: 15px;
     font-family: inherit;
+    margin-bottom: 10px;
   }
-  #sendBtn {
-    background: var(--gold);
-    color: var(--navy);
-    border: none;
-    border-radius: 20px;
-    padding: 0 18px;
-    font-weight: 600;
+  #categoryTabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .cat-btn {
+    padding: 6px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--gold);
+    background: none;
+    color: var(--gold);
+    font-size: 13px;
     font-family: inherit;
   }
+  .cat-btn.active { background: var(--gold); color: var(--navy); }
+
+  .lib-card {
+    background: var(--brown);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .lib-card h3 { color: var(--gold); font-size: 14px; margin-bottom: 6px; }
+  .lib-card p { font-size: 14px; white-space: pre-wrap; margin-bottom: 8px; }
+  .lib-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .lib-actions button {
+    font-family: inherit;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .lib-actions button.danger { background: #7a2e2e; color: var(--white); }
+
+  #addBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 26px;
+    border: none;
+    font-weight: 700;
+  }
+
+  /* Modale d'ajout */
+  #addModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+  }
+  #addModal.active { display: flex; }
+  #addForm {
+    background: var(--navy);
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 18px;
+    width: 100%;
+    max-width: 400px;
+  }
+  #addForm input, #addForm select, #addForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  #addForm textarea { min-height: 100px; }
+  #addForm .row { display: flex; gap: 8px; }
+  #addForm button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-family: inherit; font-weight: 600; }
+  #saveEntryBtn { background: var(--gold); color: var(--navy); }
+  #cancelEntryBtn { background: var(--brown); color: var(--white); }
 </style>
 </head>
 <body>
@@ -88,11 +179,41 @@
     <h1>ASSISTANT GRAPHIC PHONE</h1>
   </header>
 
-  <div id="chat"></div>
+  <div id="tabs">
+    <button class="tab-btn active" data-screen="chatScreen">Chat</button>
+    <button class="tab-btn" data-screen="libScreen">Bibliothèque</button>
+  </div>
 
-  <div id="inputBar">
-    <input id="userInput" type="text" placeholder="Écris ta demande..." />
-    <button id="sendBtn">Envoyer</button>
+  <div id="chatScreen" class="screen active" style="flex-direction:column;">
+    <div id="chat"></div>
+    <div id="inputBar">
+      <input id="userInput" type="text" placeholder="Écris ta demande..." />
+      <button id="sendBtn">Envoyer</button>
+    </div>
+  </div>
+
+  <div id="libScreen" class="screen">
+    <input id="libSearch" type="text" placeholder="Rechercher..." />
+    <div id="categoryTabs"></div>
+    <div id="libList"></div>
+  </div>
+
+  <button id="addBtn">+</button>
+
+  <div id="addModal">
+    <form id="addForm">
+      <input id="entryTitle" type="text" placeholder="Titre" required />
+      <select id="entryCategory">
+        <option value="Posts">Posts</option>
+        <option value="Réponses clients">Réponses clients</option>
+        <option value="Formation">Formation</option>
+      </select>
+      <textarea id="entryContent" placeholder="Contenu..." required></textarea>
+      <div class="row">
+        <button type="button" id="cancelEntryBtn">Annuler</button>
+        <button type="submit" id="saveEntryBtn">Enregistrer</button>
+      </div>
+    </form>
   </div>
 
   <script src="app.js"></script>
